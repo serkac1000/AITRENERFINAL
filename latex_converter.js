@@ -1,11 +1,10 @@
-
 class LaTeXConverter {
     constructor() {
         this.form = document.getElementById('converterForm');
         this.latexInput = document.getElementById('latexCode');
         this.convertBtn = document.getElementById('convertBtn');
         this.status = document.getElementById('status');
-        
+
         this.init();
     }
 
@@ -15,7 +14,7 @@ class LaTeXConverter {
 
     async handleSubmit(e) {
         e.preventDefault();
-        
+
         const latexCode = this.latexInput.value.trim();
         if (!latexCode) {
             this.showStatus('Please enter LaTeX code', 'error');
@@ -83,3 +82,65 @@ class LaTeXConverter {
 document.addEventListener('DOMContentLoaded', () => {
     new LaTeXConverter();
 });
+
+function createPresentation() {
+    const fileInput = document.getElementById('tex-file');
+    const languageInputs = document.querySelectorAll('input[name="language"]');
+    const formatInputs = document.querySelectorAll('input[name="format"]');
+
+    // Check if file is selected
+    if (!fileInput.files || fileInput.files.length === 0) {
+        showStatus('Please select a LaTeX file first', 'error');
+        return;
+    }
+
+    // Get selected language
+    let selectedLanguage = 'english';
+    for (const input of languageInputs) {
+        if (input.checked) {
+            selectedLanguage = input.value;
+            break;
+        }
+    }
+
+    // Get selected format
+    let selectedFormat = 'pptx';
+    for (const input of formatInputs) {
+        if (input.checked) {
+            selectedFormat = input.value;
+            break;
+        }
+    }
+
+    showStatus('Creating presentation...', 'processing');
+
+    const formData = new FormData();
+    formData.append('tex_file', fileInput.files[0]);
+    formData.append('language', selectedLanguage);
+    formData.append('format', selectedFormat);
+
+    fetch('/convert', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showStatus('Presentation created successfully!', 'success');
+            if (data.download_url) {
+                // Create download link
+                const link = document.createElement('a');
+                link.href = data.download_url;
+                link.download = data.filename || 'presentation';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        } else {
+            showStatus('Error: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        showStatus('Error: ' + error.message, 'error');
+    });
+}
