@@ -16,7 +16,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f0f0;
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
         }
 
         .container {
@@ -31,7 +31,7 @@
         .header {
             background: #0066CC;
             color: white;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
         }
 
@@ -44,24 +44,29 @@
             background: #28a745;
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 20px 40px;
+            font-size: 20px;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             display: block;
-            margin: 20px auto;
-            min-width: 250px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin: 15px auto;
+            min-width: 300px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .start-create-btn:hover {
             background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
         }
 
         .start-create-btn:disabled {
             background: #6c757d;
             cursor: not-allowed;
+            transform: none;
         }
 
         .main-content {
@@ -222,12 +227,12 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>LaTeX to Presentation Converter</h1>
+            <h1>📄 LaTeX to Presentation Converter</h1>
         </div>
 
-        <!-- Start Create Button at the top -->
+        <!-- PROMINENT START BUTTON AT THE TOP -->
         <button type="button" class="start-create-btn" id="startCreateBtn" onclick="startCreate()">
-            🚀 Start Create Presentation
+            🚀 START CREATE PRESENTATION
         </button>
 
         <div class="main-content">

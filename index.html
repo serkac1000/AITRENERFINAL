@@ -1,152 +1,310 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Pose Recognition</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaTeX to Presentation Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f0f0;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #0066CC;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        .start-create-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            display: block;
+            margin: 15px auto;
+            min-width: 300px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-create-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+
+        .start-create-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .section-content {
+            padding: 15px;
+        }
+
+        .file-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .file-input-group input[type="file"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .browse-btn {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .browse-btn:hover {
+            background: #0056b3;
+        }
+
+        .media-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .media-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .media-btn:hover {
+            background: #218838;
+        }
+
+        .media-btn.video {
+            background: #dc3545;
+        }
+
+        .media-btn.video:hover {
+            background: #c82333;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+        }
+
+        .media-files-list {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.processing {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .file-selected {
+            color: #0066CC;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div id="settings-page" class="page active">
-            <h1>Pose Settings</h1>
-            <div class="settings-form">
-                <div class="form-group">
-                    <label>Local Model Files: 
-                        <span class="model-info">
-                            <span class="class-counter-label">Classes:</span>
-                            <span id="model-class-counter" class="class-counter empty">0</span>
-                        </span>
-                    </label>
-                    <div class="local-files">
-                        <input type="file" id="model-json" accept=".json" placeholder="model.json">
-                        <label for="model-json">model.json</label>
-
-                        <input type="file" id="metadata-json" accept=".json" placeholder="metadata.json">
-                        <label for="metadata-json">metadata.json</label>
-
-                        <input type="file" id="weights-bin" accept=".bin" placeholder="weights.bin">
-                        <label for="weights-bin">weights.bin</label>
-
-                        <button type="button" class="clear-memory-btn" onclick="clearMemory()" title="Clear all saved model files and poses">
-                            Clear Memory
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Select Active Poses:</label>
-                    <div class="poses-selection">
-                        <div class="pose-item">
-                            <input type="checkbox" id="pose-1-enabled" checked>
-                            <label for="pose-1-enabled" contenteditable="true" onblur="updatePoseName(this, 1)">Mountain Pose (Tadasana)</label>
-                            <input type="file" id="pose-1-image" accept="image/*" onchange="handleImageUpload(event, 1)">
-                            <label for="pose-1-image">Choose File</label>
-                            <img id="pose-1-preview" class="pose-preview">
-                        </div>
-                        <div class="pose-item">
-                            <input type="checkbox" id="pose-2-enabled" checked>
-                            <label for="pose-2-enabled" contenteditable="true" onblur="updatePoseName(this, 2)">Tree Pose (Vrikshasana)</label>
-                            <input type="file" id="pose-2-image" accept="image/*" onchange="handleImageUpload(event, 2)">
-                            <label for="pose-2-image">Choose File</label>
-                            <img id="pose-2-preview" class="pose-preview">
-                        </div>
-                        <div class="pose-item">
-                            <input type="checkbox" id="pose-3-enabled" checked>
-                            <label for="pose-3-enabled" contenteditable="true" onblur="updatePoseName(this, 3)">Warrior I (Virabhadrasana I)</label>
-                            <input type="file" id="pose-3-image" accept="image/*" onchange="handleImageUpload(event, 3)">
-                            <label for="pose-3-image">Choose File</label>
-                            <img id="pose-3-preview" class="pose-preview">
-                        </div>
-                        <div class="pose-item">
-                            <input type="checkbox" id="pose-4-enabled" checked>
-                            <label for="pose-4-enabled" contenteditable="true" onblur="updatePoseName(this, 4)">Warrior II (Virabhadrasana II)</label>
-                            <input type="file" id="pose-4-image" accept="image/*" onchange="handleImageUpload(event, 4)">
-                            <label for="pose-4-image">Choose File</label>
-                            <img id="pose-4-preview" class="pose-preview">
-                        </div>
-                        <div class="pose-item">
-                            <input type="checkbox" id="pose-5-enabled" checked>
-                            <label for="pose-5-enabled" contenteditable="true" onblur="updatePoseName(this, 5)">Triangle Pose (Trikonasana)</label>
-                            <input type="file" id="pose-5-image" accept="image/*" onchange="handleImageUpload(event, 5)">
-                            <label for="pose-5-image">Choose File</label>
-                            <img id="pose-5-preview" class="pose-preview">
-                        </div>
-                        <div class="pose-item">
-                            <input type="checkbox" id="pose-6-enabled" checked>
-                            <label for="pose-6-enabled" contenteditable="true" onblur="updatePoseName(this, 6)">Child's Pose (Balasana)</label>
-                            <input type="file" id="pose-6-image" accept="image/*" onchange="handleImageUpload(event, 6)">
-                            <label for="pose-6-image">Choose File</label>
-                            <img id="pose-6-preview" class="pose-preview">
-                        </div>
-                        <div class="pose-item">
-                            <input type="checkbox" id="pose-7-enabled" checked>
-                            <label for="pose-7-enabled" contenteditable="true" onblur="updatePoseName(this, 7)">Downward Dog (Adho Mukha Svanasana)</label>
-                            <input type="file" id="pose-7-image" accept="image/*" onchange="handleImageUpload(event, 7)">
-                            <label for="pose-7-image">Choose File</label>
-                            <img id="pose-7-preview" class="pose-preview">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-row">
-                    <div class="form-group compact">
-                        <label>
-                            <input type="checkbox" id="audio-enabled" checked> Audio Beep
-                        </label>
-                    </div>
-                    <div class="form-group compact">
-                        <label>Delay (sec):</label>
-                        <input type="number" id="recognition-delay" min="1" max="10" step="1" value="3">
-                    </div>
-                    <div class="form-group compact">
-                        <label>Accuracy:</label>
-                        <input type="range" id="accuracy-threshold" min="0.3" max="0.9" step="0.05" value="0.5" onchange="updateAccuracyDisplay()">
-                        <span id="accuracy-value">0.5</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Distance Calibration Guide:</label>
-                    <div class="calibration-guide">
-                        <p><strong>For best results:</strong></p>
-                        <ul style="text-align: left; margin: 10px 0; padding-left: 20px;">
-                            <li>Stand 3-4 feet (1-1.2 meters) from your camera</li>
-                            <li>Make sure your full body is visible in the frame</li>
-                            <li>Your shoulders should appear as the right size (not too wide/narrow)</li>
-                            <li>Good lighting helps pose detection accuracy</li>
-                        </ul>
-                        <p style="font-size: 14px; color: #666;">The app will show distance feedback during recognition to help you maintain proper positioning.</p>
-                    </div>
-                </div>
-
-                <div class="action-buttons">
-                    <button onclick="startRecognition()">Start Recognition</button>
-                    <button onclick="saveAllData()">Save All Settings</button>
-                </div>
-            </div>
+        <div class="header">
+            <h1>📄 LaTeX to Presentation Converter</h1>
         </div>
-        <div id="recognition-page" class="page">
-            <h1>Pose Recognition</h1>
-            <div class="video-container">
-                <div id="webcam-container"></div>
-                <canvas id="output"></canvas>
-                <img id="pose-compare" class="pose-compare">
-                <div id="timer-display" class="timer-display">3</div>
-            </div>
-            <div id="pose-name">Current Pose: None</div>
-            <div class="confidence-container">
-                <div class="confidence-label">Confidence</div>
-                <div class="confidence-bar-background">
-                    <div id="confidence-bar" class="confidence-bar"></div>
+
+        <!-- PROMINENT START BUTTON AT THE TOP -->
+        <button type="button" class="start-create-btn" id="startCreateBtn" onclick="startCreate()">
+            🚀 START CREATE PRESENTATION
+        </button>
+
+        <div class="main-content">
+            <form id="converterForm">
+                <!-- Input LaTeX File Section -->
+                <div class="form-section">
+                    <div class="section-header">📁 Input LaTeX File</div>
+                    <div class="section-content">
+                        <div class="file-input-group">
+                            <input type="file" id="tex-file" accept=".tex" />
+                            <button type="button" class="browse-btn" onclick="document.getElementById('tex-file').click()">Browse</button>
+                        </div>
+                        <div id="tex-file-selected" class="file-selected" style="display: none;"></div>
+                    </div>
                 </div>
-                <div id="confidence-text" class="confidence-text">0%</div>
-            </div>
-            <div class="control-buttons">
-                <button onclick="refreshRecognition()">Refresh (Restart from Pose 1)</button>
-                <button onclick="showSettingsPage()">Back to Settings</button>
-            </div>
+
+                <!-- Media Files Section -->
+                <div class="form-section">
+                    <div class="section-header">🎬 Media Files (Images/Videos)</div>
+                    <div class="section-content">
+                        <div class="media-buttons">
+                            <button type="button" class="media-btn" onclick="addImages()">📸 Add Images</button>
+                            <button type="button" class="media-btn video" onclick="addVideos()">🎥 Add Videos</button>
+                            <button type="button" class="clear-btn" onclick="clearMedia()">Clear All</button>
+                        </div>
+                        <div id="media-files-list" class="media-files-list">
+                            No media files selected
+                        </div>
+                        <input type="file" id="image-files" accept="image/*" multiple style="display: none;" />
+                        <input type="file" id="video-files" accept="video/*" multiple style="display: none;" />
+                    </div>
+                </div>
+
+                <!-- Language Section -->
+                <div class="form-section">
+                    <div class="section-header">🌍 Language</div>
+                    <div class="section-content">
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="lang-en" name="language" value="english" checked>
+                                <label for="lang-en">🇺🇸 English</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="lang-ru" name="language" value="russian">
+                                <label for="lang-ru">🇷🇺 Русский (Russian)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Output Format Section -->
+                <div class="form-section">
+                    <div class="section-header">📊 Output Format</div>
+                    <div class="section-content">
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="format-pptx" name="format" value="pptx" checked>
+                                <label for="format-pptx">📊 PowerPoint (.pptx)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="format-pdf" name="format" value="pdf">
+                                <label for="format-pdf">📄 PDF Document (.pdf)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="status" id="status" style="display: none;"></div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
-    <script src="app.js"></script>
+
+    <script src="latex_converter.js"></script>
 </body>
 </html>
