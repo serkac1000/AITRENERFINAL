@@ -1,39 +1,55 @@
 
 #!/usr/bin/env python3
-import subprocess
+"""
+LaTeX to Presentation Converter Launcher
+Runs the LaTeX converter GUI application
+"""
+
 import sys
 import os
+import subprocess
 
 def install_requirements():
     """Install required packages"""
     try:
-        print("📦 Installing required packages...")
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements_latex.txt'])
-        print("✅ Packages installed successfully!")
+        # Try importing required packages
+        import tkinter
+        from pptx import Presentation
+        from reportlab.pdfgen import canvas
+        from PIL import Image
+        print("✅ All required packages are available")
         return True
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error installing packages: {e}")
-        return False
+    except ImportError as e:
+        print(f"📦 Installing missing package: {e.name if hasattr(e, 'name') else 'unknown'}")
+        try:
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'latex_requirements.txt'])
+            print("✅ Packages installed successfully")
+            return True
+        except subprocess.CalledProcessError:
+            print("❌ Failed to install packages")
+            return False
 
-def start_server():
-    """Start the LaTeX converter server"""
+def main():
+    print("🚀 Starting LaTeX to Presentation Converter...")
+    
+    # Check and install requirements
+    if not install_requirements():
+        print("❌ Cannot start application - dependency installation failed")
+        return
+    
+    # Import and run the converter app
     try:
-        print("🚀 Starting LaTeX to Presentation Converter...")
-        subprocess.run([sys.executable, 'latex_converter_server.py'])
-    except KeyboardInterrupt:
-        print("\n👋 Server stopped by user")
+        from latex_converter_app import LatexConverterApp
+        import tkinter as tk
+        
+        print("✅ Launching GUI application...")
+        root = tk.Tk()
+        app = LatexConverterApp(root)
+        root.mainloop()
+        
     except Exception as e:
-        print(f"❌ Error starting server: {e}")
+        print(f"❌ Error running application: {e}")
+        input("Press Enter to exit...")
 
 if __name__ == "__main__":
-    print("=" * 60)
-    print("🎯 LaTeX to Presentation Converter")
-    print("=" * 60)
-    
-    # Install requirements
-    if install_requirements():
-        print("\n" + "=" * 60)
-        start_server()
-    else:
-        print("❌ Failed to install requirements. Please check your Python environment.")
-        sys.exit(1)
+    main()

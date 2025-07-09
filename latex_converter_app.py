@@ -133,6 +133,14 @@ class LatexConverterApp:
                                   padx=20, pady=10)
         convert_button.pack(pady=10)
         
+        # Quick PPTX button for convenience
+        pptx_button = tk.Button(main_frame, text="📊 Quick Create PPTX", 
+                               command=self.quick_create_pptx,
+                               font=('Arial', 12, 'bold'),
+                               bg='#28a745', fg='white',
+                               padx=15, pady=8)
+        pptx_button.pack(pady=(5, 10))
+        
     def browse_latex_file(self):
         file_path = filedialog.askopenfilename(
             title="Select LaTeX File",
@@ -375,6 +383,13 @@ class LatexConverterApp:
         except Exception as e:
             raise Exception(f"Error creating PDF: {str(e)}")
             
+    def quick_create_pptx(self):
+        """Quick PPTX creation with current settings"""
+        # Set format to PPTX
+        self.output_format.set("pptx")
+        # Call the main convert function
+        self.convert_presentation()
+    
     def convert_presentation(self):
         if not self.latex_file.get():
             messagebox.showerror("Error", "Please select a LaTeX file first!")
