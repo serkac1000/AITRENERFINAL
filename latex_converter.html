@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,90 +14,130 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f0f0f0;
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #0066CC, #004499);
+            background: #0066CC;
             color: white;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            font-size: 1.8em;
+            margin: 0;
         }
 
         .main-content {
-            padding: 40px;
+            padding: 20px;
         }
 
         .form-section {
-            margin-bottom: 30px;
-        }
-
-        .form-section h3 {
-            color: #0066CC;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .textarea-container {
-            position: relative;
             margin-bottom: 20px;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 300px;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            resize: vertical;
-            transition: border-color 0.3s;
+            overflow: hidden;
         }
 
-        textarea:focus {
-            outline: none;
-            border-color: #0066CC;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .option-group {
+        .section-header {
             background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            color: #333;
         }
 
-        .option-group h4 {
-            margin-bottom: 15px;
-            color: #333;
+        .section-content {
+            padding: 15px;
+        }
+
+        .file-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .file-input-group input[type="file"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .browse-btn {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .browse-btn:hover {
+            background: #0056b3;
+        }
+
+        .media-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .media-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .media-btn:hover {
+            background: #218838;
+        }
+
+        .media-btn.video {
+            background: #dc3545;
+        }
+
+        .media-btn.video:hover {
+            background: #c82333;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+        }
+
+        .media-files-list {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
         }
 
         .radio-group {
@@ -108,16 +149,7 @@
         .radio-option {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .radio-option:hover {
-            background: #e3f2fd;
+            gap: 8px;
         }
 
         .radio-option input[type="radio"] {
@@ -126,32 +158,30 @@
 
         .radio-option label {
             cursor: pointer;
-            font-weight: 500;
+            font-size: 14px;
         }
 
-        .convert-btn {
-            background: linear-gradient(135deg, #28a745, #20c997);
+        .start-create-btn {
+            background: #0066CC;
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.1em;
+            padding: 15px 30px;
+            font-size: 16px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
             display: block;
-            margin: 0 auto;
+            margin: 30px auto 0;
+            min-width: 200px;
         }
 
-        .convert-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        .start-create-btn:hover {
+            background: #0056b3;
         }
 
-        .convert-btn:disabled {
+        .start-create-btn:disabled {
             background: #6c757d;
             cursor: not-allowed;
-            transform: none;
         }
 
         .status {
@@ -180,84 +210,55 @@
             border: 1px solid #bee5eb;
         }
 
-        .example-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .example-section h4 {
+        .file-selected {
             color: #0066CC;
-            margin-bottom: 15px;
-        }
-
-        .example-code {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            overflow-x: auto;
-        }
-
-        @media (max-width: 768px) {
-            .options-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .header h1 {
-                font-size: 2em;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 LaTeX to Presentation Converter</h1>
-            <p>Convert your LaTeX code to beautiful PowerPoint or PDF presentations</p>
+            <h1>LaTeX to Presentation Converter</h1>
         </div>
 
         <div class="main-content">
-            <div class="example-section">
-                <h4>📝 Example LaTeX Input:</h4>
-                <div class="example-code">
-\\documentclass{beamer}
-\\title{My Presentation}
-\\author{Your Name}
-\\begin{document}
-\\begin{frame}{Introduction}
-\\begin{itemize}
-\\item First point
-\\item Second point
-\\end{itemize}
-\\end{frame}
-\\end{document}
-                </div>
-            </div>
-
             <form id="converterForm">
+                <!-- Input LaTeX File Section -->
                 <div class="form-section">
-                    <h3>📄 LaTeX Code Input</h3>
-                    <div class="textarea-container">
-                        <textarea 
-                            id="latexCode" 
-                            placeholder="Paste your LaTeX code here..."
-                            required
-                        ></textarea>
+                    <div class="section-header">📁 Input LaTeX File</div>
+                    <div class="section-content">
+                        <div class="file-input-group">
+                            <input type="file" id="tex-file" accept=".tex" />
+                            <button type="button" class="browse-btn" onclick="document.getElementById('tex-file').click()">Browse</button>
+                        </div>
+                        <div id="tex-file-selected" class="file-selected" style="display: none;"></div>
                     </div>
                 </div>
 
-                <div class="options-grid">
-                    <div class="option-group">
-                        <h4>🌍 Language</h4>
+                <!-- Media Files Section -->
+                <div class="form-section">
+                    <div class="section-header">🎬 Media Files (Images/Videos)</div>
+                    <div class="section-content">
+                        <div class="media-buttons">
+                            <button type="button" class="media-btn" onclick="addImages()">📸 Add Images</button>
+                            <button type="button" class="media-btn video" onclick="addVideos()">🎥 Add Videos</button>
+                            <button type="button" class="clear-btn" onclick="clearMedia()">Clear All</button>
+                        </div>
+                        <div id="media-files-list" class="media-files-list">
+                            No media files selected
+                        </div>
+                        <input type="file" id="image-files" accept="image/*" multiple style="display: none;" />
+                        <input type="file" id="video-files" accept="video/*" multiple style="display: none;" />
+                    </div>
+                </div>
+
+                <!-- Language Section -->
+                <div class="form-section">
+                    <div class="section-header">🌍 Language</div>
+                    <div class="section-content">
                         <div class="radio-group">
                             <div class="radio-option">
                                 <input type="radio" id="lang-en" name="language" value="english" checked>
@@ -269,9 +270,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="option-group">
-                        <h4>📊 Output Format</h4>
+                <!-- Output Format Section -->
+                <div class="form-section">
+                    <div class="section-header">📊 Output Format</div>
+                    <div class="section-content">
                         <div class="radio-group">
                             <div class="radio-option">
                                 <input type="radio" id="format-pptx" name="format" value="pptx" checked>
@@ -285,14 +289,10 @@
                     </div>
                 </div>
 
-                <button type="submit" class="convert-btn" id="convertBtn">
-                    🚀 Convert LaTeX to Presentation
+                <button type="button" class="start-create-btn" id="startCreateBtn" onclick="startCreate()">
+                    🚀 Start Create
                 </button>
             </form>
-
-            <button class="convert-btn" onclick="createPresentation()">
-                🚀 Create & Open Presentation
-            </button>
 
             <div class="status" id="status" style="display: none;"></div>
         </div>
