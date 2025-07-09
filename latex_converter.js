@@ -144,6 +144,7 @@ function clearMedia() {
 }
 
 function startCreate() {
+    console.log('Start Create button clicked'); // Debug log
     const fileInput = document.getElementById('tex-file');
     const languageInputs = document.querySelectorAll('input[name="language"]');
     const formatInputs = document.querySelectorAll('input[name="format"]');
