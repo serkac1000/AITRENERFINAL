@@ -40,6 +40,30 @@
             margin: 0;
         }
 
+        .start-create-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            min-width: 250px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .start-create-btn:hover {
+            background: #218838;
+        }
+
+        .start-create-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
         .main-content {
             padding: 20px;
         }
@@ -161,31 +185,6 @@
             font-size: 14px;
         }
 
-        .start-create-btn {
-            background: #0066CC;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            display: block !important;
-            margin: 30px auto 0;
-            min-width: 200px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .start-create-btn:hover {
-            background: #0056b3;
-        }
-
-        .start-create-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-
         .status {
             text-align: center;
             margin-top: 20px;
@@ -225,6 +224,11 @@
         <div class="header">
             <h1>LaTeX to Presentation Converter</h1>
         </div>
+
+        <!-- Start Create Button at the top -->
+        <button type="button" class="start-create-btn" id="startCreateBtn" onclick="startCreate()">
+            🚀 Start Create Presentation
+        </button>
 
         <div class="main-content">
             <form id="converterForm">
@@ -290,10 +294,6 @@
                         </div>
                     </div>
                 </div>
-
-                <button type="button" class="start-create-btn" id="startCreateBtn" onclick="startCreate()">
-                    🚀 Start Create
-                </button>
             </form>
 
             <div class="status" id="status" style="display: none;"></div>

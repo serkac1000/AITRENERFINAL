@@ -1,6 +1,5 @@
 class LaTeXConverter {
     constructor() {
-        this.form = document.getElementById('converterForm');
         this.texFileInput = document.getElementById('tex-file');
         this.imageFilesInput = document.getElementById('image-files');
         this.videoFilesInput = document.getElementById('video-files');
@@ -20,7 +19,7 @@ class LaTeXConverter {
     handleTexFileSelect(e) {
         const file = e.target.files[0];
         const selectedDiv = document.getElementById('tex-file-selected');
-        
+
         if (file) {
             selectedDiv.textContent = `Selected: ${file.name}`;
             selectedDiv.style.display = 'block';
@@ -37,73 +36,7 @@ class LaTeXConverter {
         this.updateMediaFilesList();
     }
 
-    async handleSubmit(e) {
-        e.preventDefault();
-
-        const latexCode = this.latexInput.value.trim();
-        if (!latexCode) {
-            this.showStatus('Please enter LaTeX code', 'error');
-            return;
-        }
-
-        const language = document.querySelector('input[name="language"]:checked').value;
-        const format = document.querySelector('input[name="format"]:checked').value;
-
-        this.showStatus('Converting LaTeX to presentation...', 'processing');
-        this.convertBtn.disabled = true;
-
-        try {
-            const result = await this.convertLatexToPresentation(latexCode, language, format);
-            if (result.success) {
-                this.showStatus(`✅ Presentation created successfully! File: ${result.filename}`, 'success');
-                this.downloadFile(result.filename);
-            } else {
-                this.showStatus(`❌ Error: ${result.error}`, 'error');
-            }
-        } catch (error) {
-            this.showStatus(`❌ Conversion failed: ${error.message}`, 'error');
-        } finally {
-            this.convertBtn.disabled = false;
-        }
-    }
-
-    async convertLatexToPresentation(latexCode, language, format) {
-        const response = await fetch('/convert', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                latex: latexCode,
-                language: language,
-                format: format
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-    }
-
-    downloadFile(filename) {
-        const link = document.createElement('a');
-        link.href = `/download/${filename}`;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    showStatus(message, type) {
-        this.status.textContent = message;
-        this.status.className = `status ${type}`;
-        this.status.style.display = 'block';
-    }
-}
-
-updateMediaFilesList() {
+    updateMediaFilesList() {
         const listDiv = document.getElementById('media-files-list');
         if (this.mediaFiles.length === 0) {
             listDiv.textContent = 'No media files selected';
@@ -144,7 +77,7 @@ function clearMedia() {
 }
 
 function startCreate() {
-    console.log('Start Create button clicked'); // Debug log
+    console.log('Start Create button clicked');
     const fileInput = document.getElementById('tex-file');
     const languageInputs = document.querySelectorAll('input[name="language"]');
     const formatInputs = document.querySelectorAll('input[name="format"]');
