@@ -52,6 +52,85 @@ class LaTeXConverter {
         this.status.className = `status ${type}`;
         this.status.style.display = 'block';
     }
+
+    // Enhanced pose recognition with better accuracy
+    async performPoseRecognition(videoElement, model) {
+        try {
+            // Multiple predictions for better accuracy
+            const predictions = [];
+            for (let i = 0; i < 3; i++) {
+                const prediction = await model.predict(videoElement);
+                predictions.push(prediction);
+                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay between predictions
+            }
+            
+            // Calculate average confidence for each pose
+            const avgPredictions = {};
+            predictions[0].forEach((_, index) => {
+                const poseClass = predictions[0][index].className;
+                const confidences = predictions.map(p => p[index].probability);
+                const avgConfidence = confidences.reduce((sum, conf) => sum + conf, 0) / confidences.length;
+                avgPredictions[poseClass] = avgConfidence;
+            });
+            
+            // Find best prediction with enhanced confidence
+            let bestPose = null;
+            let bestConfidence = 0;
+            
+            Object.entries(avgPredictions).forEach(([className, confidence]) => {
+                // Apply confidence boost for stable predictions
+                const stabilityBoost = this.calculateStabilityBoost(className, confidence);
+                const enhancedConfidence = Math.min(confidence + stabilityBoost, 1.0);
+                
+                if (enhancedConfidence > bestConfidence) {
+                    bestConfidence = enhancedConfidence;
+                    bestPose = className;
+                }
+            });
+            
+            return {
+                pose: bestPose,
+                confidence: bestConfidence,
+                allPredictions: avgPredictions
+            };
+        } catch (error) {
+            console.error('Pose recognition error:', error);
+            return { pose: null, confidence: 0, allPredictions: {} };
+        }
+    }
+    
+    calculateStabilityBoost(className, confidence) {
+        // Store recent predictions for stability analysis
+        if (!this.recentPredictions) {
+            this.recentPredictions = {};
+        }
+        if (!this.recentPredictions[className]) {
+            this.recentPredictions[className] = [];
+        }
+        
+        this.recentPredictions[className].push(confidence);
+        
+        // Keep only last 5 predictions
+        if (this.recentPredictions[className].length > 5) {
+            this.recentPredictions[className].shift();
+        }
+        
+        // Calculate stability boost based on consistency
+        const recent = this.recentPredictions[className];
+        if (recent.length >= 3) {
+            const variance = this.calculateVariance(recent);
+            const stabilityBoost = Math.max(0, (0.3 - variance) * 0.5); // Up to 0.15 boost for stable predictions
+            return stabilityBoost;
+        }
+        
+        return 0;
+    }
+    
+    calculateVariance(values) {
+        const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+        const squaredDiffs = values.map(val => Math.pow(val - mean, 2));
+        return squaredDiffs.reduce((sum, diff) => sum + diff, 0) / values.length;
+    }
 }
 
 // Initialize the converter when DOM is loaded
