@@ -5,7 +5,7 @@ class EnhancedPoseRecognition {
         this.model = null;
         this.isModelLoaded = false;
         this.predictionHistory = {};
-        this.confidenceThreshold = 0.5;
+        this.confidenceThreshold = 0.35;
         this.stabilityWindow = 5;
         this.enhancementFactors = {
             temporalSmoothing: 0.2,
@@ -34,35 +34,43 @@ class EnhancedPoseRecognition {
 
         try {
             // Get multiple predictions for stability
-            const predictions = await this.getMultiplePredictions(canvas, 3);
+            const predictions = await this.getMultiplePredictions(canvas, 5);
+            
+            // Filter out low-quality predictions
+            const filteredPredictions = this.filterPredictions(predictions);
             
             // Apply temporal smoothing
-            const smoothedPredictions = this.applyTemporalSmoothing(predictions);
+            const smoothedPredictions = this.applyTemporalSmoothing(filteredPredictions);
             
-            // Calculate enhanced confidence
+            // Calculate enhanced confidence with better validation
             const enhancedResult = this.calculateEnhancedConfidence(smoothedPredictions);
             
-            // Update prediction history
-            this.updatePredictionHistory(enhancedResult);
+            // Apply pose validation
+            const validatedResult = this.validatePoseResult(enhancedResult);
             
-            return enhancedResult;
+            // Update prediction history
+            this.updatePredictionHistory(validatedResult);
+            
+            return validatedResult;
         } catch (error) {
             console.error('Enhanced prediction error:', error);
             return { pose: 'Error', confidence: 0 };
         }
     }
 
-    async getMultiplePredictions(canvas, count = 3) {
+    async getMultiplePredictions(canvas, count = 5) {
         const predictions = [];
         
         for (let i = 0; i < count; i++) {
             try {
                 const prediction = await this.model.predict(canvas);
-                predictions.push(prediction);
+                if (prediction && prediction.length > 0) {
+                    predictions.push(prediction);
+                }
                 
                 // Small delay between predictions for variation
                 if (i < count - 1) {
-                    await new Promise(resolve => setTimeout(resolve, 50));
+                    await new Promise(resolve => setTimeout(resolve, 30));
                 }
             } catch (error) {
                 console.warn(`Prediction ${i + 1} failed:`, error);
@@ -70,6 +78,51 @@ class EnhancedPoseRecognition {
         }
         
         return predictions;
+    }
+
+    filterPredictions(predictions) {
+        if (predictions.length === 0) return [];
+        
+        // Remove predictions where all confidences are very low
+        return predictions.filter(prediction => {
+            const maxConfidence = Math.max(...prediction.map(p => p.probability));
+            return maxConfidence > 0.1; // Filter out very weak predictions
+        });
+    }
+
+    validatePoseResult(result) {
+        if (!result || !result.pose) {
+            return { pose: 'Unknown', confidence: 0 };
+        }
+
+        // If confidence is too low, mark as unknown
+        if (result.confidence < 0.3) {
+            return { 
+                pose: 'Unknown', 
+                confidence: result.confidence,
+                originalPose: result.pose,
+                reason: 'Low confidence'
+            };
+        }
+
+        // Check for pose stability over time
+        const poseHistory = this.predictionHistory[result.pose] || [];
+        if (poseHistory.length >= 3) {
+            const recentConfidences = poseHistory.slice(-3);
+            const avgRecent = recentConfidences.reduce((sum, conf) => sum + conf, 0) / recentConfidences.length;
+            
+            // If there's a big jump in confidence, it might be noise
+            if (Math.abs(result.confidence - avgRecent) > 0.4) {
+                return {
+                    pose: 'Transitioning',
+                    confidence: Math.max(result.confidence * 0.7, 0.2),
+                    originalPose: result.pose,
+                    reason: 'Unstable detection'
+                };
+            }
+        }
+
+        return result;
     }
 
     applyTemporalSmoothing(predictions) {
@@ -108,31 +161,62 @@ class EnhancedPoseRecognition {
             return { pose: 'No Detection', confidence: 0 };
         }
         
-        // Find the pose with highest confidence
-        let bestPose = predictions[0];
-        for (let prediction of predictions) {
-            if (prediction.probability > bestPose.probability) {
-                bestPose = prediction;
+        // Calculate weighted average for each pose class
+        const poseScores = {};
+        const poseCounts = {};
+        
+        predictions.forEach(prediction => {
+            if (prediction.probability > 0.05) { // Only consider meaningful predictions
+                const className = prediction.className;
+                if (!poseScores[className]) {
+                    poseScores[className] = 0;
+                    poseCounts[className] = 0;
+                }
+                poseScores[className] += prediction.probability;
+                poseCounts[className]++;
             }
+        });
+        
+        // Find best pose with weighted scoring
+        let bestPose = null;
+        let bestScore = 0;
+        
+        Object.entries(poseScores).forEach(([className, totalScore]) => {
+            const count = poseCounts[className];
+            const avgScore = totalScore / count;
+            
+            // Weight by consistency (more detections = more reliable)
+            const consistencyWeight = Math.min(count / predictions.length, 1.0);
+            const weightedScore = avgScore * (0.7 + 0.3 * consistencyWeight);
+            
+            if (weightedScore > bestScore) {
+                bestScore = weightedScore;
+                bestPose = className;
+            }
+        });
+        
+        if (!bestPose) {
+            return { pose: 'No Detection', confidence: 0 };
         }
         
-        // Apply confidence enhancement factors
-        let enhancedConfidence = bestPose.probability;
+        // Apply enhancement factors
+        let enhancedConfidence = bestScore;
         
         // Stability boost
-        const stabilityBoost = this.calculateStabilityBoost(bestPose.className, bestPose.probability);
+        const stabilityBoost = this.calculateStabilityBoost(bestPose, bestScore);
         enhancedConfidence = Math.min(enhancedConfidence + stabilityBoost, 1.0);
         
         // Confidence boost for strong predictions
-        if (bestPose.probability > 0.7) {
-            const confidenceBoost = this.enhancementFactors.confidenceBoost * (bestPose.probability - 0.7);
+        if (bestScore > 0.6) {
+            const confidenceBoost = this.enhancementFactors.confidenceBoost * (bestScore - 0.6);
             enhancedConfidence = Math.min(enhancedConfidence + confidenceBoost, 1.0);
         }
         
         return {
-            pose: bestPose.className,
+            pose: bestPose,
             confidence: enhancedConfidence,
-            originalConfidence: bestPose.probability,
+            originalConfidence: bestScore,
+            consistency: poseCounts[bestPose] / predictions.length,
             allPredictions: predictions
         };
     }
@@ -189,6 +273,33 @@ class EnhancedPoseRecognition {
 
     clearHistory() {
         this.predictionHistory = {};
+    }
+
+    // Tune recognition parameters for better accuracy
+    tuneForAccuracy(options = {}) {
+        this.confidenceThreshold = options.threshold || 0.3;
+        this.stabilityWindow = options.stabilityWindow || 7;
+        this.enhancementFactors = {
+            temporalSmoothing: options.temporalSmoothing || 0.3,
+            confidenceBoost: options.confidenceBoost || 0.2,
+            stabilityWeight: options.stabilityWeight || 0.35
+        };
+        console.log('Pose recognition tuned for better accuracy');
+    }
+
+    // Get detailed recognition stats
+    getRecognitionStats() {
+        const stats = {};
+        Object.entries(this.predictionHistory).forEach(([pose, history]) => {
+            if (history.length > 0) {
+                stats[pose] = {
+                    detections: history.length,
+                    avgConfidence: history.reduce((sum, conf) => sum + conf, 0) / history.length,
+                    stability: this.calculateVariance(history.slice(-5))
+                };
+            }
+        });
+        return stats;
     }
 }
 

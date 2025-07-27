@@ -3,19 +3,20 @@
 const PoseConfig = {
     // Enhanced accuracy settings
     recognition: {
-        multipleReadings: 3,          // Take 3 readings per prediction
-        readingDelay: 50,             // 50ms between readings
-        confidenceThreshold: 0.45,    // Lower threshold with enhancements
-        stabilityWindow: 5,           // Remember last 5 predictions
-        minimumStabilityFrames: 3     // Need 3 stable frames
+        multipleReadings: 5,          // Take 5 readings per prediction
+        readingDelay: 30,             // 30ms between readings
+        confidenceThreshold: 0.35,    // Lower threshold for better detection
+        stabilityWindow: 7,           // Remember last 7 predictions
+        minimumStabilityFrames: 4     // Need 4 stable frames
     },
     
     // Confidence enhancement factors
     enhancement: {
-        temporalSmoothing: 0.25,      // 25% weight to previous predictions
-        stabilityBoost: 0.2,          // Up to 20% boost for stable predictions
-        confidenceAmplifier: 1.15,    // 15% amplification for strong predictions
-        varianceThreshold: 0.08       // Maximum allowed variance for stability
+        temporalSmoothing: 0.3,       // 30% weight to previous predictions
+        stabilityBoost: 0.25,         // Up to 25% boost for stable predictions
+        confidenceAmplifier: 1.2,     // 20% amplification for strong predictions
+        varianceThreshold: 0.1,       // Maximum allowed variance for stability
+        minimumDetectionConfidence: 0.1  // Minimum confidence to consider a detection
     },
     
     // Camera and preprocessing settings
