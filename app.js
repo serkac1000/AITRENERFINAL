@@ -56,12 +56,12 @@ class LaTeXConverter {
     // Enhanced pose recognition with better accuracy
     async performPoseRecognition(videoElement, model) {
         try {
-            // Multiple predictions for better accuracy
+            // More predictions for better accuracy
             const predictions = [];
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 5; i++) {
                 const prediction = await model.predict(videoElement);
                 predictions.push(prediction);
-                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay between predictions
+                await new Promise(resolve => setTimeout(resolve, 50)); // Optimized delay between predictions
             }
             
             // Calculate average confidence for each pose
